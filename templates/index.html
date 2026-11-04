@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Soporte - Resoft</title>
+</head>
+<body>
+    <h1>Panel de Resolución de Problemas</h1>
+    <p>Hola, <b>{{ current_user.username }}</b> | <a href="{{ url_for('logout') }}">Cerrar Sesión</a></p>
+
+    <hr>
+
+    <h3>Reportar un Nuevo Problema</h3>
+    <form action="{{ url_for('crear_problema') }}" method="POST">
+        <label>Título:</label><br>
+        <input type="text" name="titulo" required style="width: 300px;"><br><br>
+        <label>Descripción del problema:</label><br>
+        <textarea name="descripcion" rows="4" cols="40" required></textarea><br><br>
+        <button type="submit">Enviar Problema</button>
+    </form>
+
+    <hr>
+
+    <h3>Lista de Problemas Reportados</h3>
+    {% if problemas %}
+        <ul>
+            {% for p in problemas %}
+                <li style="margin-bottom: 20px; border: 1px solid #ccc; padding: 10px;">
+                    <strong>{{ p.titulo }}</strong> (Reportado por: {{ p.autor.username }})<br>
+                    <p>{{ p.descripcion }}</p>
+                    
+                    <div>
+                        <strong>Respuesta:</strong> 
+                        {% if p.respuesta %}
+                            <span style="color: green;">{{ p.respuesta }}</span>
+                        {% else %}
+                            <span style="color: gray;">Sin respuesta aún.</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Formulario para responder el problema -->
+                    <form action="{{ url_for('responder_problema', problema_id=p.id) }}" method="POST" style="margin-top: 5px;">
+                        <input type="text" name="respuesta" placeholder="Escribir solución..." required style="width: 250px;">
+                        <button type="submit">Responder / Solucionar</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay problemas reportados todavía.</p>
+    {% endif %}
+</body>
+</html>
